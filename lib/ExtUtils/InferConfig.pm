@@ -7,7 +7,7 @@ use IPC::Cmd qw//;
 
 use vars qw/$VERSION/;
 BEGIN {
-    $VERSION = '1.02';
+    $VERSION = '1.03';
 }
 
 #use constant ISWIN32 => ($^O =~ /win32/i ? 1 : 0);
@@ -151,9 +151,13 @@ HERE
     );
     warn "Running the following command: '@command'" if $self->{debug};
 
+    my $old_use_run = $IPC::Cmd::USE_IPC_RUN;
+    $IPC::Cmd::USE_IPC_RUN = 1;
     my ($success, $error_code, undef, $buffer, $error) = IPC::Cmd::run(
         command => \@command,
     );
+    $IPC::Cmd::USE_IPC_RUN = $old_use_run;
+    
 
     warn "Returned buffer is:\n---\n".join("\n",@$buffer)."\n---" if $self->{debug};
     warn "Returned error buffer is:\n---\n".join("\n",@$error)."\n---" if $self->{debug};
@@ -163,9 +167,6 @@ HERE
             "Could not run the specified perl interpreter to determine \%Config. Error code (if any) was: $error_code. STDERR was (if any): ".join('', @$error)
         );
     }
-
-    warn "Returned buffer is:\n---\n".join("\n",@$buffer)."\n---" if $self->{debug};
-    warn "Returned error buffer is:\n---\n".join("\n",@$error)."\n---" if $self->{debug};
 
     my %Config;
     my @data = split /\n/, join '', @$buffer;
@@ -234,18 +235,21 @@ HERE
     );
     warn "Running the following command: '@command'" if $self->{debug};
 
+    my $old_use_run = $IPC::Cmd::USE_IPC_RUN;
+    $IPC::Cmd::USE_IPC_RUN = 1;
     my ($success, $error_code, undef, $buffer, $error) = IPC::Cmd::run(
         command => \@command,
     );
+    $IPC::Cmd::USE_IPC_RUN = $old_use_run;
+
+    warn "Returned buffer is:\n---\n".join("\n",@$buffer)."\n---" if $self->{debug};
+    warn "Returned error buffer is:\n---\n".join("\n",@$error)."\n---" if $self->{debug};
 
     if (not $success) {
         croak(
             "Could not run the specified perl interpreter to determine \@INC. Error code (if any) was: $error_code. STDERR was (if any): ".join('', @$error)
         );
     }
-
-    warn "Returned buffer is:\n---\n".join("\n",@$buffer)."\n---" if $self->{debug};
-    warn "Returned error buffer is:\n---\n".join("\n",@$error)."\n---" if $self->{debug};
 
     my @inc;
     my @data = split /\n/, join '', @$buffer;
