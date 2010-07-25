@@ -7,7 +7,7 @@ use IPC::Cmd qw//;
 
 use vars qw/$VERSION/;
 BEGIN {
-    $VERSION = '1.03';
+    $VERSION = '1.04';
 }
 
 #use constant ISWIN32 => ($^O =~ /win32/i ? 1 : 0);
@@ -174,6 +174,7 @@ HERE
         my $key = shift(@data);
         chomp $key;
         my $value = shift(@data);
+        $value = '' if !defined $value; #in case of last value
         chomp $value;
         $key =~ s/%(\d+);/chr($1)/eg;
         if ($value eq '%-1;') {
@@ -288,7 +289,7 @@ Steffen Mueller, E<lt>smueller@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2007-2008 by Steffen Mueller
+Copyright (C) 2007-2010 by Steffen Mueller
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.6 or,
